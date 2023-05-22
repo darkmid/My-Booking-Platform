@@ -1,0 +1,6 @@
+venv
+__pycache__
+.vscode
+docker
+app/logs
+.env.prod
