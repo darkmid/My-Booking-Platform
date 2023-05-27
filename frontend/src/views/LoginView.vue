@@ -12,7 +12,7 @@ import {
   NTable,
   NGradientText,
 } from "naive-ui";
-import { computed, ref } from "vue";
+import { VueElement, computed, ref } from "vue";
 import { useAuthStore, useCampusStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 
@@ -48,7 +48,7 @@ campusStore.fetchCampus();
 </script>
 
 <template>
-  <div class="login">
+  <div class="login gradientBg">
     <n-space class="m-20 bg-white flex" vertical>
       <n-gradient-text type="error" size="20" class="">
         Belows are demo accounts.<br />
@@ -82,7 +82,10 @@ campusStore.fetchCampus();
       </n-table>
     </n-space>
 
-    <n-space vertical class="mr-20 min-h-fit min-w-fit">
+    <n-space
+      vertical
+      class="mr-20 min-h-fit min-w-fit bg-gray-50 bg-opacity-30 rounded-lg shadow-xl p-10"
+    >
       <n-h1>Welcome to My Booking Platform Online</n-h1>
       <n-h5>Please login to continue</n-h5>
       <n-form ref="formRef" :model="formValue">
@@ -130,4 +133,6 @@ campusStore.fetchCampus();
   justify-content: flex-end;
   align-items: center;
 }
+
+@import "../assets/page_background.css";
 </style>

@@ -74,8 +74,12 @@ const rules: FormRules = {
 </script>
 
 <template>
-  <div class="forget">
-    <n-space vertical space-between class="w-1/2 bg-gray-800 rounded">
+  <div class="forget gradientBg">
+    <n-space
+      vertical
+      space-between
+      class="w-1/2 bg-gray-50 bg-opacity-30 rounded-lg shadow-xl"
+    >
       <n-form
         :model="updatePasswordForm"
         class="m-20"
@@ -114,6 +118,7 @@ const rules: FormRules = {
 </template>
 
 <style lang="less">
+@import "../assets/page_background.css";
 .forget {
   width: 100vw;
   height: 100vh;

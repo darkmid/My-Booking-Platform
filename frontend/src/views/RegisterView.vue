@@ -121,8 +121,12 @@ const rules: FormRules = {
 </script>
 
 <template>
-  <div class="register">
-    <n-space vertical space-between class="w-1/2 bg-gray-800 rounded">
+  <div class="register gradientBg">
+    <n-space
+      vertical
+      space-between
+      class="w-1/2 bg-gray-50 bg-opacity-30 rounded-lg shadow-xl p-10"
+    >
       <n-form :model="newStudentForm" class="m-20" :rules="rules" ref="formRef">
         <n-form-item label="Username" path="username">
           <n-input v-model:value="newStudentForm.username" clearable />
@@ -167,6 +171,7 @@ const rules: FormRules = {
 </template>
 
 <style lang="less">
+@import "../assets/page_background.css";
 .register {
   width: 100vw;
   height: 100vh;
