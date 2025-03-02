@@ -3,7 +3,7 @@ import axios from "@/utils/http";
 import { getCurrentUser } from "@/api/user";
 import { StorageSerializers, useLocalStorage, useStorage } from "@vueuse/core";
 import { type User } from "@/interfaces/user.interface";
-import { Campus } from "@/api/course";
+import { type Campus } from "@/api/course";
 import { getCurrentCampus, useCurrentCampus } from "@/api/campus";
 
 const PREFIX = import.meta.env.VITE_STORAGE_PREFIX;
