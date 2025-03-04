@@ -1,6 +1,9 @@
 import boto3
 from flask import current_app
 from werkzeug.utils import secure_filename
+import base64
+from io import BytesIO
+from werkzeug.datastructures import FileStorage
 
 s3 = boto3.client("s3")
 
@@ -23,3 +26,11 @@ def generate_s3_signed_url(object_name):
         Params={"Bucket": current_app.config["AWS_BUCKET_NAME"], "Key": object_name},
         ExpiresIn=3600,
     )
+
+
+def base64_to_filestorage(base64_string, filename):
+    """Convert a Base64 string to a FileStorage object"""
+    decoded_data = base64.b64decode(base64_string)  # Decode Base64
+    file = BytesIO(decoded_data)  # Convert to in-memory file
+    return FileStorage(stream=file, filename=filename, content_type="image/png")
+
