@@ -1,6 +1,6 @@
 import type { User } from "@/interfaces/user.interface";
 import axios from "../utils/http";
-import type { Campus } from "./course";
+import type { Campus, Teacher } from "./course";
 
 export interface CreateStudentData {
   username: string;
@@ -28,4 +28,9 @@ export const changePassword = async (
 
 export const registerNewStudent = async (data: CreateStudentData) => {
   (await axios.post(`/students`, data)).data;
+};
+
+export const getTeacherList = async () => {
+  const res = await axios.get<Teacher[]>(`/users?type=teacher`);
+  return res.data;
 };
