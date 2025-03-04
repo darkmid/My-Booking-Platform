@@ -110,6 +110,12 @@ class CourseBasicInfoSchema(MongoModel):
     original_price: float
     cover_image: str
 
+    @validator("cover_image")
+    def generate_signed_url(cls, v):
+        if v:
+            return generate_s3_signed_url(v)
+        return v
+
 
 class CourseListSchema(MongoListModel):
     __root__: List[CourseBasicInfoSchema]
