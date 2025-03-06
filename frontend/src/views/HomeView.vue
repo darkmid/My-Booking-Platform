@@ -4,8 +4,13 @@ import CoursesStatus from "@/components/CourseStatus.vue";
 import CourseList from "@/components/CourseList.vue";
 import { NGrid, NGridItem, NDivider } from "naive-ui";
 import { useAuthStore, useCampusStore } from "@/stores/auth";
+
 const authStore = useAuthStore();
 const campusStore = useCampusStore();
+
+const refreshUserInfo = async () => {
+  await authStore.reload();
+};
 </script>
 
 <template>
@@ -27,5 +32,6 @@ const campusStore = useCampusStore();
   <course-list
     :user-info="authStore.getUserInfo!"
     :courses="authStore.getUserInfo?.enrolled_courses || []"
+    @refresh="refreshUserInfo"
   ></course-list>
 </template>

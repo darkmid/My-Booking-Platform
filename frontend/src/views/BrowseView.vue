@@ -3,12 +3,17 @@ import CourseList from "../components/CourseList.vue";
 import { useCourseList } from "../api/course";
 import { useAuthStore } from "@/stores/auth";
 
-const { data: courseList, isLoading } = useCourseList();
+const { data: courseList, isLoading, execute: refreshCourseList } = useCourseList();
 const authStore = useAuthStore();
+
+const handleRefresh = () => {
+  refreshCourseList();
+};
 </script>
 <template>
   <course-list
     :user-info="authStore.getUserInfo!"
     :courses="courseList!"
+    @refresh="handleRefresh"
   ></course-list>
 </template>
