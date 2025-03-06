@@ -16,3 +16,14 @@ class CustomEncoder(json.JSONEncoder):
             return str(obj)
         else:
             return super().default(obj)
+
+def prepare_reference_fields(update_dict, field_mappings):
+    result = update_dict.copy()
+    
+    for field_name, (model_class, error_msg) in field_mappings.items():
+        if field_name in result:
+            field_id = result[field_name]
+            obj = model_class.objects(id=field_id).first_or_404(error_msg)
+            result[field_name] = obj
+    
+    return result
