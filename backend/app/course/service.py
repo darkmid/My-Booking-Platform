@@ -7,7 +7,7 @@ from werkzeug.exceptions import NotFound
 
 from app.campus.model import Campus
 from app.core.service import BaseService
-from app.core.storage import upload_file_to_s3
+from app.core.storage import upload_file_to_s3, base64_to_filestorage
 from app.course.model import Course, Lecture, LectureAttachment
 from app.course.schema import (
     CourseCreateSchema,
@@ -17,8 +17,8 @@ from app.course.schema import (
     LecturePutSchema,
 )
 from app.user.model import Teacher, User
-
-
+from app.core.convertor import prepare_reference_fields
+from app.core.storage import base64_to_s3_storage
 class CourseService(BaseService):
     def __init__(self, user: User) -> None:
         super().__init__(CourseService.__name__, user)
@@ -33,10 +33,28 @@ class CourseService(BaseService):
 
     def create_course(self, course: CourseCreateSchema) -> Course:
         self.logger.info("Creating courses")
+        print(course.teacher, type(course.teacher))
         Campus.objects(id=course.campus).first_or_404("Campus not exists")
         Teacher.objects(id=course.teacher).first_or_404("Teacher not exists")
-        course = Course(**course.dict())
-        return course.save()
+        print(course.teacher, type(course.teacher))
+        # Store the cover image temporarily
+        temp_cover_image = course.cover_image
+        
+        # Create course without cover image first
+        course_data = course.dict(exclude={"cover_image"})
+        new_course = Course(**course_data)
+        new_course.save()
+        
+        # Now upload the cover image with course ID in the path
+        if temp_cover_image is not None:
+            # Use the course ID in the S3 path
+            s3_path = f"courses/{new_course.id}"
+            
+            # Update the course with the cover image URL
+            new_course.cover_image = base64_to_s3_storage(temp_cover_image, s3_path)
+            new_course.save()
+        
+        return new_course
 
     def list_courses(self, campus: str = None, teacher: str = None) -> List[Course]:
         self.logger.info("Fetching courses")
@@ -55,8 +73,15 @@ class CourseService(BaseService):
 
     def update_course(self, course_id: str, course: CoursePutSchema):
         update_dict = course.dict(exclude_none=True, exclude_defaults=True)
+        if "cover_image" in update_dict:
+            temp_cover_image = update_dict["cover_image"]
+            s3_path = f"courses/{course_id}"
+            update_dict["cover_image"] = base64_to_s3_storage(temp_cover_image, s3_path)
+
+        update_dict = prepare_reference_fields(update_dict, {"teacher": (Teacher, "Teacher not exists")})   
         if len(update_dict) == 0:
             return
+        
         Course.objects(id=course_id).first_or_404("Course not exists").update(
             **update_dict
         )

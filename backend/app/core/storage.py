@@ -34,3 +34,6 @@ def base64_to_filestorage(base64_string, filename):
     file = BytesIO(decoded_data)  # Convert to in-memory file
     return FileStorage(stream=file, filename=filename, content_type="image/png")
 
+def base64_to_s3_storage(base64_string, resource_path):
+    file = base64_to_filestorage(base64_string, "cover_image.png")
+    return upload_file_to_s3(file, resource_path)
