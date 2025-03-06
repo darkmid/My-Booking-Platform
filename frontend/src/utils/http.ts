@@ -12,7 +12,7 @@ const CSRF_ACCESS_TOKEN = "csrf_access_token";
 const cookies = useCookies([CSRF_ACCESS_TOKEN]);
 
 const axiosInstance = axios.create({
-  timeout: 5000,
+  timeout: 10000,
   baseURL: import.meta.env.VITE_API_BASE,
 });
 
