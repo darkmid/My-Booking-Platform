@@ -1,4 +1,4 @@
-# My Booking Platform 
+# E-Learning Hub
 It is an in-developing Single Page Application(SPA). The user group includes the
 administrator, teacher, and student. It allows the teacher to schedule online lectures and deliver digital
 materials to students.

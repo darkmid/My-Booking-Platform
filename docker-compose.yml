@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   backend:
-    image: 167715488575.dkr.ecr.ap-southeast-2.amazonaws.com/my-booking-platform-backend
+    image: 167715488575.dkr.ecr.ap-southeast-2.amazonaws.com/e-learning-hub-backend
     restart: always
     env_file: backend/.env.prod
     build: backend
@@ -17,7 +17,7 @@ services:
 
 
   frontend:
-    image: 167715488575.dkr.ecr.ap-southeast-2.amazonaws.com/my-booking-platform-frontend
+    image: 167715488575.dkr.ecr.ap-southeast-2.amazonaws.com/e-learning-hub-frontend
     restart: always
     platform: "linux/amd64"
     build: frontend

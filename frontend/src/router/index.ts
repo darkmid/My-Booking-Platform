@@ -101,7 +101,7 @@ router.beforeEach((to) => {
 
 router.afterEach((to) => {
   document.title =
-    to.meta.title || to.name?.toString() || "My Booking Platform";
+    to.meta.title || to.name?.toString() || "E-Learning Hub";
 });
 
 export default router;

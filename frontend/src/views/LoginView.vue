@@ -86,7 +86,7 @@ campusStore.fetchCampus();
       vertical
       class="mr-20 min-h-fit min-w-fit bg-gray-50 bg-opacity-30 rounded-lg shadow-xl p-10"
     >
-      <n-h1>Welcome to My Booking Platform Online</n-h1>
+      <n-h1>Welcome to E-Learning Hub Online</n-h1>
       <n-h5>Please login to continue</n-h5>
       <n-form ref="formRef" :model="formValue">
         <n-form-item path="username" label="Username">

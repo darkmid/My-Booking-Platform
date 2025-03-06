@@ -1,6 +1,14 @@
-# booking system
+# E-Learning Hub
 
-This template should help get you started developing with Vue 3 in Vite.
+A modern online learning platform built with Vue 3 and Vite. This E-Learning Hub provides an interactive environment for students and instructors to connect, share resources, and manage educational content.
+
+## Features
+
+- User authentication for students and instructors
+- Course catalog and enrollment management
+- Interactive learning materials and assessments
+- Progress tracking and performance analytics
+- Responsive design for desktop and mobile devices
 
 ## Recommended IDE Setup
 
