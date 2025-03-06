@@ -74,6 +74,21 @@ export const useCourse = (course_id: string) =>
 
 export const useCourseList = () =>
   useAxios<CourseBasicInfo[]>(`/courses`, axios);
+
+export const deleteCourse = async (courseId: string) => 
+  await axios.delete(`/courses/${courseId}`);
+
+export interface CourseUpdateData {
+  name?: string;
+  description?: string;
+  teacher?: string;
+  original_price?: number;
+  cover_image?: string;
+}
+
+export const updateCourse = async (courseId: string, data: CourseUpdateData) =>
+  await axios.put(`/courses/${courseId}`, data);
+
 export const deleteLecture = async (course_id: string, lecture_id: string) =>
   await axios.delete(`/courses/${course_id}/lectures/${lecture_id}`);
 
