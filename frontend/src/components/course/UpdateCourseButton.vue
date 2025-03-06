@@ -78,6 +78,10 @@ const handleCoverImageUploaded = (base64: string) => {
   updateCourseForm.value.cover_image = base64;
 };
 
+const handleCoverImageReset = () => {
+  updateCourseForm.value.cover_image = "";
+};
+
 // Update the course
 const submitCourseUpdate = async () => {
   try {
@@ -223,6 +227,7 @@ const showUpdateCourseModal = ref(false);
         <image-uploader 
           :initialImageUrl="originalImageUrl" 
           @uploaded="handleCoverImageUploaded" 
+          @reset="handleCoverImageReset"
         />
         
         <n-space justify="end" class="mt-4">

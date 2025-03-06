@@ -46,7 +46,7 @@ class CourseService(BaseService):
         new_course.save()
         
         # Now upload the cover image with course ID in the path
-        if temp_cover_image is not None:
+        if temp_cover_image:
             # Use the course ID in the S3 path
             s3_path = f"courses/{new_course.id}"
             
@@ -72,8 +72,8 @@ class CourseService(BaseService):
         return Course.objects(id=course_id).delete()
 
     def update_course(self, course_id: str, course: CoursePutSchema):
-        update_dict = course.dict(exclude_none=True, exclude_defaults=True)
-        if "cover_image" in update_dict:
+        update_dict = course.dict(exclude_none=True)
+        if "cover_image" in update_dict and update_dict.get("cover_image"):
             temp_cover_image = update_dict["cover_image"]
             s3_path = f"courses/{course_id}"
             update_dict["cover_image"] = base64_to_s3_storage(temp_cover_image, s3_path)
