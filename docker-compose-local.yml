@@ -1,8 +1,6 @@
-version: '3.9'
-
 services:
   backend:
-    image: my-booking-platform-backend
+    image: e-learning-hub-backend
     restart: always
     env_file: backend/.env.prod
     build: backend
@@ -10,9 +8,11 @@ services:
 
 
   frontend:
-    image: my-booking-platform-frontend
+    image: e-learning-hub-frontend
     restart: always
-    build: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
 
 
   nginx:
