@@ -2,10 +2,20 @@
 import { useCourseList } from "@/api/course";
 import CourseList from "@/components/CourseList.vue";
 import { useAuthStore } from "@/stores/auth";
-import CourseControlPanel from '@/components/CourseControlPanel.vue';
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
+const router = useRouter();
+const isAdmin = computed(() => authStore.hasPermission('course_admin'));
+
+// Redirect admin users to browse page since it's the same content
+onMounted(() => {
+  if (isAdmin.value) {
+    router.replace('/browse');
+  }
+});
+
 const { data: courseList, isLoading, execute: refreshCourseList } = useCourseList();
 
 const handleRefresh = () => {
@@ -14,7 +24,6 @@ const handleRefresh = () => {
 </script>
 <template>
   <div>
-    <CourseControlPanel />
     <course-list
       :user-info="authStore.getUserInfo!"
       :courses="courseList!"

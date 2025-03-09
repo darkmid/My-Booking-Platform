@@ -15,8 +15,9 @@ interface MenuItem {
 const route = useRoute();
 const currentKey = ref(route.fullPath.slice(1));
 const collapsed = ref(false);
-const autStore = useAuthStore();
-const auth = storeToRefs(autStore);
+const authStore = useAuthStore();
+const auth = storeToRefs(authStore);
+const isAdmin = computed(() => authStore.hasPermission('course_admin'));
 
 watchEffect(() => {
   if (route.fullPath !== currentKey.value) {
@@ -24,7 +25,7 @@ watchEffect(() => {
   }
 });
 const menus = computed<MenuItem[]>(() => {
-  return [
+  const menuItems: MenuItem[] = [
     {
       label: "Home",
       key: "home",
@@ -38,6 +39,16 @@ const menus = computed<MenuItem[]>(() => {
       path: "/browse",
     },
     {
+      label: "Orders",
+      key: "orders",
+      icon: Cart,
+      path: "/orders",
+    },
+  ];
+  
+  // Only show "Courses" menu for non-admin users
+  if (!isAdmin.value) {
+    menuItems.splice(2, 0, {
       label: "Courses",
       key: "courses",
       path: "/courses",
@@ -49,14 +60,10 @@ const menus = computed<MenuItem[]>(() => {
           path: `/courses/${id}`,
         })
       ),
-    },
-    {
-      label: "Orders",
-      key: "orders",
-      icon: Cart,
-      path: "/orders",
-    },
-  ];
+    } as MenuItem);
+  }
+  
+  return menuItems;
 });
 
 const renderMenu = (menus: MenuItem[]): any =>
