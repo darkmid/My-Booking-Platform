@@ -75,6 +75,12 @@ class CourseDetailSchema(MongoModel):
     lectures: List[LectureSchema]
     enrolled_students: List[CourseEnrolledStudentsSchema]
 
+    @validator("cover_image")
+    def generate_signed_url(cls, v):
+        if v:
+            return generate_s3_signed_url(v)
+        return v
+
 
 class CourseCreateSchema(MongoModel):
     name: str
