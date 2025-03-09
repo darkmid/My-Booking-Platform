@@ -17,7 +17,6 @@ const currentKey = ref(route.fullPath.slice(1));
 const collapsed = ref(false);
 const authStore = useAuthStore();
 const auth = storeToRefs(authStore);
-const isAdmin = computed(() => authStore.hasPermission('course_admin'));
 
 watchEffect(() => {
   if (route.fullPath !== currentKey.value) {
@@ -47,7 +46,7 @@ const menus = computed<MenuItem[]>(() => {
   ];
   
   // Only show "Courses" menu for non-admin users
-  if (!isAdmin.value) {
+  if (authStore.isStudent) {
     menuItems.splice(2, 0, {
       label: "Courses",
       key: "courses",

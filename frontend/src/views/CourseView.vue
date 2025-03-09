@@ -12,6 +12,7 @@ const {
   isFinished,
   execute: reloadCourse,
 } = useCourse(route.params.id.toString());
+const authStore = useAuthStore();
 const { hasPermission } = useAuthStore();
 </script>
 
@@ -31,12 +32,12 @@ const { hasPermission } = useAuthStore();
           <course-lecture
             :lecture="lecture"
             :course_id="course.id"
-            :is-admin="hasPermission('course_admin')"
+            :is-admin="hasPermission('course_admin') || authStore.isTeacher"
             :on-update="reloadCourse"
           ></course-lecture>
         </n-grid-item>
       </n-grid>
-      <n-divider v-if="hasPermission('course_admin')">
+      <n-divider v-if="hasPermission('course_admin') || authStore.isTeacher">
         <new-lecture-button
           :course-id="course.id"
           :on-created="reloadCourse"

@@ -45,7 +45,7 @@ const gridCols = computed(() => {
 });
 
 const isEnrolledCourse = (course_id: string) => {
-  if (props.userInfo?.permissions?.includes("course_admin")) {
+  if (props.userInfo?.permissions?.includes("course_admin") || authStore.isTeacher) {
     return true;
   } else {
     return props.userInfo?.enrolled_courses
