@@ -43,7 +43,6 @@ export const useAuthStore = defineStore({
     userInfo: useLocalStorage<User | null>(USER_INFO_PREFIX, null, {
       serializer: StorageSerializers.object,
     }),
-    // userInfo: JSON.parse(localStorage.getItem(USER_INFO_PREFIX) ?? "null"),
   }),
   getters: {
     getUserInfo: (state) => state.userInfo,
@@ -54,6 +53,7 @@ export const useAuthStore = defineStore({
     hasPermission: (state) => (permission: string) => {
       return state.userInfo?.permissions?.includes(permission) || false;
     },
+    getEnrolledCourses: (state) => state.userInfo?.enrolled_courses || [],
   },
   actions: {
     async login(username: string, password: string) {

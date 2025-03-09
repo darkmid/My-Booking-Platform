@@ -280,7 +280,7 @@ const showNewCourseModal = ref(false);
             @click="createNewCourse" 
             :loading="isCreatingCourse"
           >
-            Create Without Image
+            {{ newCourseForm.cover_image ? 'Create Course' : 'Create Without Image' }}
           </n-button>
         </n-space>
       </div>

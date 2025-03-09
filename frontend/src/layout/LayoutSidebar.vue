@@ -45,23 +45,14 @@ const menus = computed<MenuItem[]>(() => {
     },
   ];
   
-  // Only show "Courses" menu for non-admin users
-  if (authStore.isStudent) {
-    menuItems.splice(2, 0, {
+  if(authStore.isStudent) {
+    menuItems.splice(2,0,{
       label: "Courses",
       key: "courses",
       path: "/courses",
       icon: Book,
-      children: auth.getUserInfo.value?.enrolled_courses?.map(
-        ({ id, name }) => ({
-          label: name,
-          key: `courses/${id}`,
-          path: `/courses/${id}`,
-        })
-      ),
     } as MenuItem);
   }
-  
   return menuItems;
 });
 

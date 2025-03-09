@@ -14,6 +14,9 @@ import {
   NButton,
   NModal,
   NPopconfirm,
+  NSpin,
+  NDivider,
+  NEmpty,
   useMessage,
 } from "naive-ui";
 import { ref, computed } from "vue";
@@ -23,6 +26,7 @@ import UpdateCourseButton from "@/components/course/UpdateCourseButton.vue";
 const props = defineProps<{
   userInfo: User;
   courses: CourseBasicInfo[];
+  loading?: boolean;
 }>();
 
 const emit = defineEmits(['refresh']);
@@ -102,113 +106,122 @@ const handleCourseUpdated = () => {
 </script>
 <template>
   <div class="course-list-container">
-    <n-grid :cols="gridCols" :x-gap="16" :y-gap="24" responsive="screen">
-      <n-grid-item v-for="course in courses" :key="course.id">
-        <n-card :title="course.name" class="course-card">
-          <template #cover>
-            <div class="course-image-container">
-              <n-a @click="handleCourseClick(course.id)" class="course-link">
-                <img 
-                  :src="course.cover_image || defaultCourseImage" 
-                  :alt="course.name" 
-                  class="course-image" 
-                />
-              </n-a>
+    <n-spin :show="props.loading" description="Loading courses...">
+      <n-grid :cols="gridCols" :x-gap="16" :y-gap="24" responsive="screen" v-if="courses && courses.length > 0">
+        <n-grid-item v-for="course in courses" :key="course.id">
+          <n-card :title="course.name" class="course-card">
+            <template #cover>
+              <div class="course-image-container">
+                <n-a @click="handleCourseClick(course.id)" class="course-link">
+                  <img 
+                    :src="course.cover_image || defaultCourseImage" 
+                    :alt="course.name" 
+                    class="course-image" 
+                  />
+                </n-a>
+              </div>
+            </template>
+            <div class="course-content">
+              <n-p class="course-teacher"> 
+                <strong>Teacher:</strong> {{ course.teacher.display_name }} 
+              </n-p>
+              <n-p class="course-description"> 
+                <strong>Description:</strong> {{ course.description }} 
+              </n-p>
             </div>
-          </template>
-          <div class="course-content">
-            <n-p class="course-teacher"> 
-              <strong>Teacher:</strong> {{ course.teacher.display_name }} 
-            </n-p>
-            <n-p class="course-description"> 
-              <strong>Description:</strong> {{ course.description }} 
-            </n-p>
-          </div>
-          <template #footer>
-            <!-- Purchase button for non-enrolled users -->
-            <n-space
-              justify="space-between"
-              align="center"
-              class="course-footer"
-              v-if="!isEnrolledCourse(course.id)"
-            >
-              <span class="course-price">
-                ${{ course.original_price }}
-              </span>
-              <n-button
-                size="small"
-                type="success"
-                class="purchase-button"
-                @click="() => clickPurchase(course.id)"
-                >Purchase now</n-button
+            <template #footer>
+              <!-- Purchase button for non-enrolled users -->
+              <n-space
+                justify="space-between"
+                align="center"
+                class="course-footer"
+                v-if="!isEnrolledCourse(course.id)"
               >
-            </n-space>
-            
-            <!-- Enrolled status for regular users -->
-            <n-space 
-              v-else-if="isEnrolledCourse(course.id) && !isAdmin"
-              class="course-footer" 
-              align="center"
-            >
-              <span class="enrolled-status">
-                Enrolled
-              </span>
-            </n-space>
-            
-            <!-- Admin actions -->
-            <n-space 
-              v-else-if="isAdmin"
-              justify="space-between" 
-              align="center"
-              class="course-footer"
-            >
-              <!-- Left side shows enrollment count -->
-              <span class="enrolled-status">
-                Admin
-              </span>
-              
-              <!-- Right side shows admin actions -->
-              <n-space>
-                <update-course-button
-                  :course="course"
-                  :onUpdated="handleCourseUpdated"
-                />
-                
-                <n-popconfirm
-                  positive-text="Yes"
-                  negative-text="No"
-                  @positive-click="() => handleDeleteCourse(course.id)"
+                <span class="course-price">
+                  ${{ course.original_price }}
+                </span>
+                <n-button
+                  size="small"
+                  type="success"
+                  class="purchase-button"
+                  @click="() => clickPurchase(course.id)"
+                  >Purchase now</n-button
                 >
-                  <template #trigger>
-                    <n-button 
-                      size="small" 
-                      type="error" 
-                      :loading="deletingCourses.get(course.id)"
-                      class="delete-button"
-                    >
-                      Delete Course
-                    </n-button>
-                  </template>
-                  <template #default>
-                    <div style="max-width: 280px">
-                      <p>Are you sure you want to delete this course?</p>
-                      <p style="margin-top: 8px; font-weight: bold">This will permanently delete:</p>
-                      <ul style="padding-left: 16px; margin-top: 8px">
-                        <li>The course information</li>
-                        <li>All associated lectures</li>
-                        <li>All uploaded files</li>
-                        <li>All student enrollments</li>
-                      </ul>
-                      <p style="margin-top: 8px"><strong>This action cannot be undone!</strong></p>
-                    </div>
-                  </template>
-                </n-popconfirm>
               </n-space>
-            </n-space>
+              
+              <!-- Enrolled status for regular users -->
+              <n-space 
+                v-else-if="isEnrolledCourse(course.id) && !isAdmin"
+                class="course-footer" 
+                align="center"
+              >
+                <span class="enrolled-status">
+                  Enrolled
+                </span>
+              </n-space>
+              
+              <!-- Admin actions -->
+              <n-space 
+                v-else-if="isAdmin"
+                justify="space-between" 
+                align="center"
+                class="course-footer"
+              >
+                <!-- Left side shows enrollment count -->
+                <span class="enrolled-status">
+                  Admin
+                </span>
+                
+                <!-- Right side shows admin actions -->
+                <n-space>
+                  <update-course-button
+                    :course="course"
+                    :onUpdated="handleCourseUpdated"
+                  />
+                  
+                  <n-popconfirm
+                    positive-text="Yes"
+                    negative-text="No"
+                    @positive-click="() => handleDeleteCourse(course.id)"
+                  >
+                    <template #trigger>
+                      <n-button 
+                        size="small" 
+                        type="error" 
+                        :loading="deletingCourses.get(course.id)"
+                        class="delete-button"
+                      >
+                        Delete Course
+                      </n-button>
+                    </template>
+                    <template #default>
+                      <div style="max-width: 280px">
+                        <p>Are you sure you want to delete this course?</p>
+                        <p style="margin-top: 8px; font-weight: bold">This will permanently delete:</p>
+                        <ul style="padding-left: 16px; margin-top: 8px">
+                          <li>The course information</li>
+                          <li>All associated lectures</li>
+                          <li>All uploaded files</li>
+                          <li>All student enrollments</li>
+                        </ul>
+                        <p style="margin-top: 8px"><strong>This action cannot be undone!</strong></p>
+                      </div>
+                    </template>
+                  </n-popconfirm>
+                </n-space>
+              </n-space>
+            </template>
+          </n-card>
+        </n-grid-item>
+      </n-grid>
+      <div v-else-if="!props.loading && (!courses || courses.length === 0)" class="empty-state">
+        <n-empty description="No courses found">
+          <template #extra>
+            <n-button @click="$emit('refresh')">Refresh</n-button>
           </template>
-        </n-card>
-      </n-grid-item>
-    </n-grid>
+        </n-empty>
+      </div>
+    </n-spin>
   </div>
   <n-modal
     v-model:show="showPurchaseModal"
@@ -226,6 +239,14 @@ const handleCourseUpdated = () => {
   padding: 16px;
   max-width: 1400px;
   margin: 0 auto;
+  min-height: 300px; /* Ensure enough height for spinner */
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
 }
 
 .course-card {

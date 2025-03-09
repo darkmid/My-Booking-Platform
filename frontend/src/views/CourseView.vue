@@ -6,14 +6,14 @@ import CourseDetails from "@/components/course/CourseDetails.vue";
 import CourseLecture from "@/components/course/CourseLecture.vue";
 import NewLectureButton from "@/components/course/NewLectureButton.vue";
 import { useAuthStore } from "@/stores/auth";
+import { useCourseStore } from "@/stores/course";
 const route = useRoute();
-const {
-  data: course,
-  isFinished,
-  execute: reloadCourse,
-} = useCourse(route.params.id.toString());
+const courseId = route.params.id.toString();
+const { data: course, isFinished, execute: reloadCourse } = useCourse(courseId);
+
 const authStore = useAuthStore();
 const { hasPermission } = useAuthStore();
+const courseStore = useCourseStore();
 </script>
 
 <template>

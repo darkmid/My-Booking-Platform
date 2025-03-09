@@ -2,7 +2,7 @@
 import router from "@/router";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import { useCourse } from "@/api/course";
+import { useCourseStore } from "@/stores/course";
 import {
   NLayoutHeader,
   NBreadcrumb,
@@ -14,11 +14,18 @@ import {
   NA,
 } from "naive-ui";
 import { storeToRefs } from "pinia";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watch, markRaw, onMounted } from "vue";
 import { Home, Book, BookOutline, School, Grid } from "@vicons/ionicons5";
+
+// Mark icon components as raw (non-reactive) to prevent the Vue warning
+const HomeIcon = markRaw(Home);
+const BookIcon = markRaw(Book);
+const BookOutlineIcon = markRaw(BookOutline);
+const GridIcon = markRaw(Grid);
 
 const route = useRoute();
 const authStore = useAuthStore();
+const courseStore = useCourseStore();
 const auth = storeToRefs(authStore);
 const displayName = computed(() => {
   return auth.userInfo.value?.display_name || auth.userInfo.value?.username;
@@ -26,65 +33,50 @@ const displayName = computed(() => {
 
 // Breadcrumb logic
 const breadcrumbs = ref<{ name: string; path: string; icon?: any }[]>([]);
-const currentCourse = ref<any>(null);
-const currentLectureTitle = ref<string>('');
 
-// Watch for route changes to update breadcrumbs
-watchEffect(async () => {
+// Update breadcrumbs based on current route
+const updateBreadcrumbs = () => {
   // Always start with Home
   breadcrumbs.value = [
-    { name: 'Home', path: '/home', icon: Home }
+    { name: 'Home', path: '/home', icon: HomeIcon }
   ];
-  
-  // Reset course and lecture info
-  currentCourse.value = null;
-  currentLectureTitle.value = '';
   
   // Build breadcrumbs based on current route
   if (route.path.includes('/browse')) {
-    breadcrumbs.value.push({ name: 'All Courses', path: '/browse', icon: Grid });
+    breadcrumbs.value.push({ name: 'All Courses', path: '/browse', icon: GridIcon });
   } else if (route.path.includes('/courses')) {
-    breadcrumbs.value.push({ name: 'My Courses', path: '/courses', icon: BookOutline });
+    breadcrumbs.value.push({ name: 'My Courses', path: '/courses', icon: BookOutlineIcon });
     
     // If viewing a specific course, add it to breadcrumbs
     if (route.params.id) {
-      try {
-        // Fetch course details
-        const courseId = route.params.id.toString();
-        const { data: course } = useCourse(courseId);
-        
-        // Wait for the course data to be loaded
-        if (course.value) {
-          currentCourse.value = course.value;
-          breadcrumbs.value.push({ 
-            name: course.value.name, 
-            path: `/courses/${courseId}`,
-            icon: Book
-          });
-          
-          // If there's a lecture hash in the URL, add it as well
-          const hash = route.hash;
-          if (hash && hash.startsWith('#lecture-')) {
-            const lectureId = hash.replace('#lecture-', '');
-            const lecture = course.value.lectures.find(l => l.id === lectureId);
-            if (lecture) {
-              currentLectureTitle.value = lecture.title;
-              breadcrumbs.value.push({ 
-                name: lecture.title, 
-                path: `${route.path}${hash}`,
-                icon: School
-              });
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching course for breadcrumbs:', error);
-      }
+      const courseId = route.params.id.toString();
+      const courseName = courseStore.getCourseNameById(courseId);
+      
+      breadcrumbs.value.push({ 
+        name: courseName, 
+        path: `/courses/${courseId}`,
+        icon: BookIcon
+      });
     }
   } else if (route.path.includes('/orders')) {
     breadcrumbs.value.push({ name: 'Orders', path: '/orders' });
   }
+};
+
+// Load courses data on component mount
+onMounted(async () => {
+  // Only fetch courses if we need to
+  await courseStore.fetchCourses();
+  updateBreadcrumbs();
 });
+
+// Watch only for changes to the route path and params
+watch(
+  () => [route.path, route.params.id],
+  () => {
+    updateBreadcrumbs();
+  }
+);
 
 const options = [{ label: "Sign out", key: "logout" }];
 const handleOptionSelect = async (key: string) => {
@@ -148,3 +140,4 @@ const handleOptionSelect = async (key: string) => {
   margin-bottom: 4px;
 }
 </style>
+

@@ -4,9 +4,15 @@ import CoursesStatus from "@/components/CourseStatus.vue";
 import CourseList from "@/components/CourseList.vue";
 import { NGrid, NGridItem, NDivider } from "naive-ui";
 import { useAuthStore, useCampusStore } from "@/stores/auth";
-
+import { useCourseStore } from "@/stores/course";
+import { onMounted } from "vue";
 const authStore = useAuthStore();
 const campusStore = useCampusStore();
+const courseStore = useCourseStore();
+
+onMounted(() => {
+  courseStore.fetchCourses();
+});
 
 const refreshUserInfo = async () => {
   await authStore.reload();
