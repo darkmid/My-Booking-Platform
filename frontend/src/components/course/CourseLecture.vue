@@ -116,7 +116,9 @@ const handleDelete = async () => {
             <template #icon>
               <n-icon :component="DocumentAttach"></n-icon>
             </template>
-            <n-a :href="attachment.signed_url">{{ attachment.name }}</n-a>
+            <n-a :href="attachment.signed_url" target="_blank">{{
+              attachment.name
+            }}</n-a>
           </n-tag>
           <n-tag
             v-if="isAdmin"
