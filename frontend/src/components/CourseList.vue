@@ -35,6 +35,9 @@ const showPurchaseModal = ref(false);
 const clickedCourse = ref<string>("");
 const deletingCourses = ref<Map<string, boolean>>(new Map());
 
+// Use require to import the image (or define the path)
+const defaultCourseImage = '/src/assets/course_wrap.png';
+
 // Responsive columns based on screen width
 const gridCols = computed(() => {
   // Using a single number for responsive breakpoints
@@ -105,7 +108,11 @@ const handleCourseUpdated = () => {
           <template #cover>
             <div class="course-image-container">
               <n-a @click="handleCourseClick(course.id)" class="course-link">
-                <img :src="course.cover_image" :alt="course.name" class="course-image" />
+                <img 
+                  :src="course.cover_image || defaultCourseImage" 
+                  :alt="course.name" 
+                  class="course-image" 
+                />
               </n-a>
             </div>
           </template>

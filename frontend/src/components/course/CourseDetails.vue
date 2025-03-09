@@ -14,6 +14,10 @@ import {
   NDivider,
 } from "naive-ui";
 import { People } from "@vicons/ionicons5";
+
+// Define the default course image path
+const defaultCourseImage = '/src/assets/course_wrap.png';
+
 const props = defineProps<{
   course: Course;
 }>();
@@ -24,7 +28,8 @@ const auth = storeToRefs(authStore);
   <n-card>
     <div class="flex">
       <n-image
-        src="https://drive.google.com/uc?export=view&id=1bOaOcYUpwQwZw5SU8-9NWh0JxNmiDQ-t"
+        style="width: 200px; height: 200px;"
+        :src="props.course.cover_image || defaultCourseImage"
       ></n-image>
       <!-- <n-image :src="props.course.cover_image"></n-image> -->
       <n-space vertical class="course-info h-full pl-10">
