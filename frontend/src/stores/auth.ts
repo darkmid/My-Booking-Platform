@@ -48,6 +48,8 @@ export const useAuthStore = defineStore({
   getters: {
     getUserInfo: (state) => state.userInfo,
     isAdmin: (state) => state.userInfo?.user_type === "admin",
+    isTeacher: (state) => state.userInfo?.user_type === "teacher",
+    isStudent: (state) => state.userInfo?.user_type === "student",
     isLoggedIn: (state) => state.userInfo !== null,
     hasPermission: (state) => (permission: string) => {
       return state.userInfo?.permissions?.includes(permission) || false;
