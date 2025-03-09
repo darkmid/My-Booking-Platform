@@ -22,8 +22,9 @@ def permission_required(permission=None):
                     return func(*arg, **kwargs)
                 else:
                     raise PermissionDenied(f"Permission '{permission}' is required")
+            elif current_user._cls == "User.Teacher":
+                return func(*arg, **kwargs)
             raise PermissionDenied()
-
         return decorator
 
     return wrapper
