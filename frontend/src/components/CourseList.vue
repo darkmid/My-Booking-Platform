@@ -40,7 +40,7 @@ const clickedCourse = ref<string>("");
 const deletingCourses = ref<Map<string, boolean>>(new Map());
 
 // Use require to import the image (or define the path)
-const defaultCourseImage = '/src/assets/course_wrap.png';
+const defaultCourseImage = '/course_wrap.png';
 
 // Responsive columns based on screen width
 const gridCols = computed(() => {

@@ -50,7 +50,13 @@ const menus = computed<MenuItem[]>(() => {
       label: "Courses",
       key: "courses",
       path: "/courses",
-      icon: Book,
+      icon: Book,children: auth.getUserInfo.value?.enrolled_courses?.map(
+        ({ id, name }) => ({
+          label: name,
+          key: `courses/${id}`,
+          path: `/courses/${id}`,
+        })
+      ),
     } as MenuItem);
   }
   return menuItems;

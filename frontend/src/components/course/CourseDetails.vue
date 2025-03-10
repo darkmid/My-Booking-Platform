@@ -16,7 +16,7 @@ import {
 import { People } from "@vicons/ionicons5";
 
 // Define the default course image path
-const defaultCourseImage = '/src/assets/course_wrap.png';
+const defaultCourseImage = '/course_wrap.png';
 
 // Standard dimensions for course images (matching the ImageUploader)
 const STANDARD_WIDTH = 800;
