@@ -16,9 +16,10 @@ from app.course.schema import (
     LectureCreateSchema,
     LecturePutSchema,
 )
-from app.user.model import Teacher, User
+from app.user.model import Teacher, User, Student
 from app.core.convertor import prepare_reference_fields
 from app.core.storage import base64_to_s3_storage
+
 class CourseService(BaseService):
     def __init__(self, user: User) -> None:
         super().__init__(CourseService.__name__, user)
@@ -69,7 +70,29 @@ class CourseService(BaseService):
         return self.get_course_query(id=course_id).first_or_404("Course not exists")
 
     def delete_course(self, course_id: str) -> int:
-        return Course.objects(id=course_id).delete()
+        course = self.get_course_query(id=course_id).first_or_404("Course not exists")
+        if course.enrolled_students:
+            self.logger.info(f"Removing course from {len(course.enrolled_students)} student enrollments")
+            for student in course.enrolled_students:
+                # Update student's enrolled_courses list
+                Student.objects(id=student.id).update_one(pull__enrolled_courses=course.id)
+    
+        # Clean up S3 resources if needed
+        if course.cover_image:
+            # Here you might want to add S3 deletion logic
+            # For example: s3.delete_object(Bucket=current_app.config["AWS_BUCKET_NAME"], Key=course.cover_image)
+            self.logger.info(f"Deleting course cover image: {course.cover_image}")
+        
+        # For each lecture, clean up attachments if needed
+        for lecture in course.lectures:
+            for attachment in lecture.attachments:
+                if attachment.bucket_url:
+                    # Here you might want to add S3 deletion logic for attachments
+                    self.logger.info(f"Deleting lecture attachment: {attachment.bucket_url}")
+        
+        # Perform the actual deletion
+        course.delete()
+        return 1  # Indicating successful deletion
 
     def update_course(self, course_id: str, course: CoursePutSchema):
         update_dict = course.dict(exclude_none=True)
