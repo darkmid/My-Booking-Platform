@@ -31,9 +31,9 @@ interface CourseForm {
 
 const newCourseFormRef = ref(null);
 const newCourseForm = ref<CourseForm>({
-  name: "course1",
-  uni_course_code: "course1",
-  description: "course1",
+  name: "",
+  uni_course_code: "",
+  description: "",
   teacher: "",
   campus: "",
   original_price: 0,

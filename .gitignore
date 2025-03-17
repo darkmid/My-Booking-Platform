@@ -1,1 +1,5 @@
 backend/logs/default.log
+frontend/.env.production
+/copilot
+.DS_Store
+docker-compose.yml
